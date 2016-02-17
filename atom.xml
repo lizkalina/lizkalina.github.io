@@ -4,7 +4,7 @@
   <title><![CDATA[Web Dev Blog]]></title>
   <link href="http://lizkalina.github.io/atom.xml" rel="self"/>
   <link href="http://lizkalina.github.io/"/>
-  <updated>2016-02-16T17:18:02-05:00</updated>
+  <updated>2016-02-16T22:30:59-05:00</updated>
   <id>http://lizkalina.github.io/</id>
   <author>
     <name><![CDATA[Liz]]></name>
@@ -14,12 +14,16 @@
 
   
   <entry>
+    
     <title type="html"><![CDATA[My First Post on Octopress]]></title>
     <link href="http://lizkalina.github.io/blog/2016/02/16/my-first-post-on-octopress/"/>
+    
     <updated>2016-02-16T17:13:09-05:00</updated>
     <id>http://lizkalina.github.io/blog/2016/02/16/my-first-post-on-octopress</id>
+    
     <content type="html"><![CDATA[<p>&ldquo;Hello, World!&rdquo;</p>
 ]]></content>
+    
   </entry>
   
 </feed>
