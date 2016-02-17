@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: flatiron | Web Dev Blog]]></title>
-  <link href="http://lizkalina.github.io/blog/categories/flatiron/atom.xml" rel="self"/>
+  <title><![CDATA[Category: flatiron&nbsp;school | Web Dev Blog]]></title>
+  <link href="http://lizkalina.github.io/blog/categories/flatiron-school/atom.xml" rel="self"/>
   <link href="http://lizkalina.github.io/"/>
-  <updated>2016-02-16T22:30:59-05:00</updated>
+  <updated>2016-02-16T22:34:51-05:00</updated>
   <id>http://lizkalina.github.io/</id>
   <author>
     <name><![CDATA[Liz]]></name>
