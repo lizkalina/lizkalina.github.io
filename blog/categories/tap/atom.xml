@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: flatiron&nbsp;school | Web Dev Blog]]></title>
-  <link href="http://lizkalina.github.io/blog/categories/flatiron-school/atom.xml" rel="self"/>
+  <title><![CDATA[Category: tap | Web Dev Blog]]></title>
+  <link href="http://lizkalina.github.io/blog/categories/tap/atom.xml" rel="self"/>
   <link href="http://lizkalina.github.io/"/>
   <updated>2016-02-17T23:18:21-05:00</updated>
   <id>http://lizkalina.github.io/</id>
@@ -135,15 +135,6 @@ end
 <!-- 
 !['yas, queen'](https://media.giphy.com/media/kGZ4jJguXT5C0/giphy.gif "yas, queen") -->
 
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[My First Post on Octopress]]></title>
-    <link href="http://lizkalina.github.io/blog/2016/02/16/my-first-post-on-octopress/"/>
-    <updated>2016-02-16T17:13:09-05:00</updated>
-    <id>http://lizkalina.github.io/blog/2016/02/16/my-first-post-on-octopress</id>
-    <content type="html"><![CDATA[<p>&ldquo;Hello, World!&rdquo;</p>
 ]]></content>
   </entry>
   

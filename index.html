@@ -9,8 +9,7 @@
   <meta name="author" content="Liz">
 
   
-  <meta name="description" content="&ldquo;Hello, World!&rdquo;
-">
+  <meta name="description" content="Why #tap you may ask? This method made me have a ‘Ruby, you rock' moment. I first stumbled upon it during the ‘Advanced Class Methods Lab,’ which had &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -42,7 +41,7 @@
 	<div class="header-title"><a href="/">Web Dev Blog</a></div>
 
 
-	<br><div class="header-subtitle">my Ruby thoughts.</div>
+	<br><div class="header-subtitle">my Ruby thoughts</div>
 
 </header>
   <nav role="navigation"><ul class="subscription" data-subscription="rss">
@@ -68,6 +67,203 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+  
+    
+      <h1 class="entry-title"><a href="/blog/2016/02/16/tap-that-dot-dot-dot-method/">TAP THAT...method</a></h1>
+      
+      
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-02-16T22:37:40-05:00" pubdate data-updated="true"></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Why #tap you may ask? This method made me have a ‘Ruby, you rock' moment. I first stumbled upon it during the ‘Advanced Class Methods Lab,’ which had us write methods to create new instances of a Song class, modify that instance and return it. Although my code passed the tests, it had a bad code smell. I couldn’t say what exactly was wrong, but it just felt off. I brought this up with Ian who suggested I look into the tap method. I had no idea what that was so I did a little research, refactored my code with tap and celebrated with a ‘YASSSSS.’</p>
+
+<p><img class="center" src="https://media.giphy.com/media/kGZ4jJguXT5C0/giphy.gif" width="1928">
+<br></p>
+
+<h1>What can #tap do for you?</h1>
+
+<p>Let&rsquo;s take a quick look at a before and after of my &lsquo;Advacned Class Methods Lab.&rsquo; Both sets of code get the job done. In my earlier code, there was a line for instantiating the object, then a few lines of operations on that object and then a final lines returning that same object. Another blogger aptly called this &lsquo;sandwich code.&rsquo;&lsquo; After refactoring, I could do creation, operations and return all in one line!</p>
+
+<h3>BEFORE #tap</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">create</span>
+</span><span class='line'>    <span class="n">song</span> <span class="o">=</span> <span class="nb">self</span><span class="o">.</span><span class="n">new</span>
+</span><span class='line'>    <span class="n">song</span><span class="o">.</span><span class="n">save</span>
+</span><span class='line'>    <span class="n">song</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">new_by_name</span><span class="p">(</span><span class="n">song_name</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">song</span> <span class="o">=</span> <span class="nb">self</span><span class="o">.</span><span class="n">new</span>
+</span><span class='line'>    <span class="n">song</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">song_name</span>
+</span><span class='line'>    <span class="n">song</span>
+</span><span class='line'>  <span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>AFTER #tap</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'> <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">create</span>
+</span><span class='line'>    <span class="nb">self</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">tap</span><span class="p">{</span><span class="o">|</span><span class="n">song</span><span class="o">|</span> <span class="n">song</span><span class="o">.</span><span class="n">save</span><span class="p">}</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">new_by_name</span><span class="p">(</span><span class="n">song_name</span><span class="p">)</span>
+</span><span class='line'>    <span class="nb">self</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">tap</span><span class="p">{</span><span class="o">|</span><span class="n">song</span><span class="o">|</span> <span class="n">song</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">song_name</span><span class="p">}</span>
+</span><span class='line'>  <span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>side by side from GitHub</h3>
+
+<p><img src="/images/tap-method/github-example.png" alt="github code" /></p>
+
+<p><br></p>
+
+<h1>How does #tap work though?</h1>
+
+<p>The <a href="http://ruby-doc.org/core-2.3.0/Object.html#method-i-tap">official Ruby documentation</a> says:</p>
+
+<blockquote><p>tap{|x|&hellip;} → obj
+Yields self to the block, and then returns self. The primary purpose of this method is to “tap into” a method chain, in order to perform operations on intermediate results within the chain.</p></blockquote>
+
+<h3>So essentially, the #tap method definition is:</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">tap</span>
+</span><span class='line'>  <span class="k">yield</span><span class="p">(</span><span class="nb">self</span><span class="p">)</span>
+</span><span class='line'>  <span class="nb">self</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>and when #tap is called:</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">an_object</span><span class="o">.</span><span class="n">tap</span> <span class="k">do</span> <span class="o">|</span><span class="n">object</span><span class="o">|</span>
+</span><span class='line'>  <span class="c1"># do stuff with an_object</span>
+</span><span class='line'><span class="k">end</span> <span class="c1"># ===&gt; return an_object</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Self is the object tap is being called on (i.e. &lsquo;an_object&rsquo;). When tap runs, self first yields to the block (i.e. the code between do and end). And finally self (with block operations completed) will be returned.</p>
+
+<h3>Going back to my Song example this would mean:</h3>
+
+<ul>
+<li>self is Song.new</li>
+<li>yields to {|song| song.name = song_name} passing in Song.new</li>
+<li>returns Song.new with song.name set to song_name</li>
+</ul>
+
+
+<p><br></p>
+
+<h1>Using #tap to seed data</h1>
+
+<p>Let’s go through one more example from the seed.rb file during Jeff’s CLI lecture…</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">courses</span> <span class="o">=</span> <span class="o">[</span><span class="s1">&#39;Math&#39;</span><span class="p">,</span> <span class="s1">&#39;Physics&#39;</span><span class="p">,</span> <span class="s1">&#39;English&#39;</span><span class="p">,</span> <span class="s1">&#39;History&#39;</span><span class="o">].</span><span class="n">map</span> <span class="k">do</span> <span class="o">|</span><span class="n">course_name</span><span class="o">|</span>
+</span><span class='line'>  <span class="no">Course</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">tap</span> <span class="k">do</span> <span class="o">|</span><span class="n">course</span><span class="o">|</span>
+</span><span class='line'>    <span class="n">course</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">course_name</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span class='line'>    <span class="n">teacher</span> <span class="o">=</span> <span class="no">Teacher</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;Mr. </span><span class="si">#{</span><span class="n">course_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">teacher</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Mr. </span><span class="si">#{</span><span class="n">course_name</span><span class="si">}</span><span class="s2"> teacher&quot;</span>
+</span><span class='line'>    <span class="n">course</span><span class="o">.</span><span class="n">teacher</span> <span class="o">=</span> <span class="n">teacher</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This is more complex than the Song example, but really the purpose is the same. First, the map method goes through each item in the array with school subjects, creating a new instance of the Course object for each subject. #tap is called on each new Course object. Operations happen: A name is assigned to the Course, a new instance of the Teacher object is created and assigned as the teacher for the Course. After all that, the four new Course objects (with attributes assigned) is returned to tap, which is then returned to map. So the &lsquo;courses&rsquo; variable now equals:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="o">[&lt;</span><span class="ss">Course</span><span class="p">:</span><span class="mh">0x007f9e39047e80</span> <span class="vi">@name</span><span class="o">=</span><span class="s2">&quot;Math&quot;</span><span class="p">,</span> <span class="vi">@teacher</span><span class="o">=&lt;</span><span class="ss">Teacher</span><span class="p">:</span><span class="mh">0x007f9e39047db8</span> <span class="vi">@name</span><span class="o">=</span><span class="s2">&quot;Mr. Math teacher&quot;</span><span class="o">&gt;&gt;</span><span class="p">,</span>
+</span><span class='line'><span class="o">&lt;</span><span class="ss">Course</span><span class="p">:</span><span class="mh">0x007f9e39047d68</span> <span class="vi">@name</span><span class="o">=</span><span class="s2">&quot;Physics&quot;</span><span class="p">,</span> <span class="vi">@teacher</span><span class="o">=&lt;</span><span class="ss">Teacher</span><span class="p">:</span><span class="mh">0x007f9e39047cc8</span> <span class="vi">@name</span><span class="o">=</span><span class="s2">&quot;Mr. Physics teacher&quot;</span><span class="o">&gt;&gt;</span><span class="p">,</span>
+</span><span class='line'><span class="o">&lt;</span><span class="ss">Course</span><span class="p">:</span><span class="mh">0x007f9e39047c78</span> <span class="vi">@name</span><span class="o">=</span><span class="s2">&quot;English&quot;</span><span class="p">,</span> <span class="vi">@teacher</span><span class="o">=&lt;</span><span class="ss">Teacher</span><span class="p">:</span><span class="mh">0x007f9e39047bd8</span> <span class="vi">@name</span><span class="o">=</span><span class="s2">&quot;Mr. English teacher&quot;</span><span class="o">&gt;&gt;</span><span class="p">,</span>
+</span><span class='line'><span class="o">&lt;</span><span class="ss">Course</span><span class="p">:</span><span class="mh">0x007f9e39047b88</span> <span class="vi">@name</span><span class="o">=</span><span class="s2">&quot;History&quot;</span><span class="p">,</span> <span class="vi">@teacher</span><span class="o">=&lt;</span><span class="ss">Teacher</span><span class="p">:</span><span class="mh">0x007f9e39047ae8</span> <span class="vi">@name</span><span class="o">=</span><span class="s2">&quot;Mr. History teacher&quot;</span><span class="o">&gt;&gt;]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>This allowed us to quickly create a ton of sample data with minimal lines of code!</h3>
+
+<p>Takeaways: #tap is pretty awesome! It’s great for assigning properties to an object and overriding method returns. In simple cases like my Song example, it’s really just for convenience, but for more complex examples like the CLI seed file, it can actually lead to cleaner, clearer code. Watch out though, #tap should not be used to make your code look super fancy or obscure what the code is actually doing. Other interesting use cases still TBD.</p>
+
+<p><img class="center" src="https://media.giphy.com/media/3oEdv5S8Th6b9gsNqM/giphy.gif"></p>
+
+<h1><center>damn, that sandwich can tap</center></h1>
+
+<!-- external-url: http://ruby-doc.org/core-2.3.0/Object.html#method-i-tap
+
+
+<script src="https://gist.github.com/lizkalina/7a037a413995deeb4144.js"></script> -->
+
+
+
+
+<!-- 
+!['yas, queen'](https://media.giphy.com/media/kGZ4jJguXT5C0/giphy.gif "yas, queen") -->
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -118,6 +314,10 @@
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2016/02/16/tap-that-dot-dot-dot-method/">TAP THAT...method</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2016/02/16/my-first-post-on-octopress/">My First Post on Octopress</a>
