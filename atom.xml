@@ -4,7 +4,7 @@
   <title><![CDATA[Web Dev Blog]]></title>
   <link href="http://lizkalina.github.io/atom.xml" rel="self"/>
   <link href="http://lizkalina.github.io/"/>
-  <updated>2016-02-17T23:18:21-05:00</updated>
+  <updated>2016-03-03T07:55:38-05:00</updated>
   <id>http://lizkalina.github.io/</id>
   <author>
     <name><![CDATA[Liz]]></name>
@@ -12,6 +12,153 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    
+    <title type="html"><![CDATA[Param-arama: the Params Hash]]></title>
+    <link href="http://lizkalina.github.io/blog/2016/03/02/param-arama-sending-data-with-the-params-hash/"/>
+    
+    <updated>2016-03-02T20:13:04-05:00</updated>
+    <id>http://lizkalina.github.io/blog/2016/03/02/param-arama-sending-data-with-the-params-hash</id>
+    
+    <content type="html"><![CDATA[<p>The params hash was first introduced to me with forms. When a user submitted a form in the view, a hash with that data was (magically?) passed to the controller. We later learned that the params hash can also be populated with data from the URL string. In this post, I will go over what params are, how they are passed from the view to the controller and review how to create/manipulate/accesss the params sent.</p>
+
+<p>go over what params are, how they works and how they relate to the HTTP protocol.</p>
+
+<h3><center>form data goes in, params hash comes out?</center></h3>
+
+<p><img class="center" src="https://media.giphy.com/media/x7l3pkXcDrKPm/giphy.gif" width="1928"></p>
+
+<p><br></p>
+
+<h1>Query String Parameters vs. POST Data</h1>
+
+<p> After doing some digging, I discovered there are officially two types of parameters. The first type can be specified in the URL string and the other can be sent via a POST request. This is based on HTTP protocol, which handles all communication between users and databases.</p>
+
+<p>According to the <a href="http://guides.rubyonrails.org/v3.2.9/action_controller_overview.html">Ruby on Rails Guides website</a>:</p>
+
+<blockquote><p>The first are parameters that are sent as part of the URL, called query string parameters. The query string is everything after “?” in the URL. The second type of parameter is usually referred to as POST data. This information usually comes from an HTML form which has been filled in by the user. It’s called POST data because it can only be sent as part of an HTTP POST request.</p></blockquote>
+
+<p>In both cases, the data is passed from the user to the controller as a params hash. This happens in the Request message body for POST requests and in the Request line for GET requests. Let&rsquo;s take a quick look at what these different request types look like.</p>
+
+<h2>Form with POST Request</h2>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="o">&lt;</span><span class="n">form</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;http://foo.com&quot;</span> <span class="nb">method</span><span class="o">=</span><span class="s2">&quot;POST&quot;</span><span class="o">&gt;</span>
+</span><span class='line'>  <span class="o">&lt;</span><span class="n">input</span> <span class="nb">name</span><span class="o">=</span><span class="s2">&quot;say&quot;</span> <span class="n">value</span><span class="o">=</span><span class="s2">&quot;Abracadabra&quot;</span><span class="o">&gt;</span>
+</span><span class='line'>  <span class="o">&lt;</span><span class="n">input</span> <span class="nb">name</span><span class="o">=</span><span class="s2">&quot;to&quot;</span> <span class="n">value</span><span class="o">=</span><span class="s2">&quot;Gob Bluth&quot;</span><span class="o">&gt;</span>
+</span><span class='line'>  <span class="o">&lt;</span><span class="n">button</span><span class="o">&gt;</span><span class="no">Send</span> <span class="no">Magic</span><span class="o">&lt;</span><span class="sr">/button&gt;</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">form</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>the HTTP request would look something like this&hellip;</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='http'><span class='line'><span class="nf">POST</span> <span class="nn">/</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+</span><span class='line'><span class="na">Host</span><span class="o">:</span> <span class="l">foo.com</span>
+</span><span class='line'><span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/x-www-form-urlencoded</span>
+</span><span class='line'><span class="na">Content-Length</span><span class="o">:</span> <span class="l">30</span>
+</span><span class='line'>
+</span><span class='line'>say=Abracadabra&amp;to=Gob%20Bluth
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Form with GET Request</h2>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="o">&lt;</span><span class="n">form</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;http://foo.com&quot;</span> <span class="nb">method</span><span class="o">=</span><span class="s2">&quot;GET&quot;</span><span class="o">&gt;</span>
+</span><span class='line'>  <span class="o">&lt;</span><span class="n">input</span> <span class="nb">name</span><span class="o">=</span><span class="s2">&quot;say&quot;</span> <span class="n">value</span><span class="o">=</span><span class="s2">&quot;Abracadabra&quot;</span><span class="o">&gt;</span>
+</span><span class='line'>  <span class="o">&lt;</span><span class="n">input</span> <span class="nb">name</span><span class="o">=</span><span class="s2">&quot;to&quot;</span> <span class="n">value</span><span class="o">=</span><span class="s2">&quot;David Blaine&quot;</span><span class="o">&gt;</span>
+</span><span class='line'>  <span class="o">&lt;</span><span class="n">button</span><span class="o">&gt;</span><span class="no">Send</span> <span class="no">Magic</span><span class="o">&lt;</span><span class="sr">/button&gt;</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">form</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>the HTTP request would look like&hellip;</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='http'><span class='line'><span class="nf">GET</span> <span class="nn">/?say=Abracadabra&amp;to=David%20Blaine</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+</span><span class='line'><span class="na">Host</span><span class="o">:</span> <span class="l">foo.com</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>So with a GET request, the user will see the data in their URL bar, but with a POST request, they cannot. This is relevant for two main reasons. First, if you&rsquo;re sending sensitive info, such as passwords, you do not want this displayed in the URL. Secondly, you want to use a POST request for large data sets because some browsers limit the length of URLs they accept.</p>
+
+<p><br></p>
+
+<h1>Accessing Params from the Controller</h1>
+
+<p>When a person submits a form, the web server stores the data from the form in a request object, executes the action/method route specified in the form tag to the controller. From there, you can access and manipulate the params hash by simply typing params. Side note: The params hash is actually an instance of HashWithIndifferentAccess from Active Support. It behaves exactly like a hash, but you can access its elements using strings or symbols as keys.</p>
+
+<h2>nested parameters</h2>
+
+<p>Form data will be structured based on how you set up your form in the view. Hashes are created by placing the name of the nested hash between the square brackets as the name value for an input. From the controller, that bracket value will become the key to access the user&rsquo;s input e.g. params[:owner_id]. You could chain additional brackets/values after the first to create a nested tree of hashes and arrays.</p>
+
+<p>in the view:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'>  <span class="nt">&lt;label&gt;</span>Choose an owner:<span class="nt">&lt;/label&gt;</span>
+</span><span class='line'>  <span class="err">&lt;</span>% Owner.all.each do | owner | %&gt;
+</span><span class='line'>  <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;checkbox&quot;</span> <span class="na">name=</span><span class="s">&quot;pet[owner_id]&quot;</span> <span class="na">value=</span><span class="s">&quot;&lt;%= owner.id %&gt;&quot;</span> <span class="na">id=</span><span class="s">&quot;&lt;%= owner.id %&gt;&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>  <span class="err">&lt;</span>%= owner.name %&gt;
+</span><span class='line'>  <span class="err">&lt;</span>% end %&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>in the controller:</p>
+
+<p><strong>params = {&ldquo;pet&rdquo;=>{&ldquo;name&rdquo;=>&ldquo;Michael&rdquo;, &ldquo;owner_id&rdquo;=>&ldquo;1&rdquo;}}</strong></p>
+
+<h2>array parameters</h2>
+
+<p>To send an array of values to your controller for a given key, append empty brackets to the value attribute e.g. owner[pet_ids][]. The multiple values selected (via checkboxes or otherwise) are stored in the params hash in an array. Each items value is set by their associated HTML element tag value. You can access this array from the controller in the same way you would a string e.g. params[:owner][:pet_ids]. The ability to create these array is extremely useful, especially when it comes to mass assignment for creating or updating objects.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'>  <span class="nt">&lt;label&gt;</span>Choose the owner&#39;s pets:<span class="nt">&lt;/label&gt;</span>
+</span><span class='line'>  <span class="err">&lt;</span>% Pet.all.each do | pet | %&gt;
+</span><span class='line'>  <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;checkbox&quot;</span> <span class="na">name=</span><span class="s">&quot;owner[pet_ids][]&quot;</span> <span class="na">value=</span><span class="s">&quot;&lt;%= pet.id %&gt;&quot;</span> <span class="na">id=</span><span class="s">&lt;%=</span> <span class="na">pet</span><span class="err">.</span><span class="na">id</span> <span class="err">%</span><span class="nt">&gt;</span>&gt;
+</span><span class='line'>  <span class="err">&lt;</span>%= pet.name %&gt;
+</span><span class='line'>  <span class="err">&lt;</span>% end %&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>in the controller:</p>
+
+<p><strong>params = {&ldquo;owner&rdquo;=>{&ldquo;name&rdquo;=>&ldquo;Sophie&rdquo;, &ldquo;pet_ids&rdquo;=>[&ldquo;1&rdquo;,&ldquo;3&rdquo;,&ldquo;5&rdquo;]}}</strong></p>
+
+<h3>Helpful Resources</h3>
+
+<ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Forms/Sending_and_retrieving_form_data">Sending Form Data</a>, Mozilla Developer Network</li>
+<li><a href="http://guides.rubyonrails.org/v3.2.9/action_controller_overview.html">Action Controller Overview</a>, RailsGuides</li>
+</ul>
+
+]]></content>
+    
+  </entry>
   
   <entry>
     

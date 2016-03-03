@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
+<loc>http://lizkalina.github.io/blog/2016/03/02/param-arama-sending-data-with-the-params-hash/</loc>
+<lastmod>2016-03-02T20:13:04-05:00</lastmod>
+</url>
+<url>
 <loc>http://lizkalina.github.io/blog/2016/02/16/tap-that-dot-dot-dot-method/</loc>
 <lastmod>2016-02-16T22:37:40-05:00</lastmod>
 </url>
@@ -22,5 +26,8 @@
 </url>
 <url>
 <loc>http://lizkalina.github.io/blog/categories/tap/</loc>
+</url>
+<url>
+<loc>http://lizkalina.github.io/blog/categories/http-requests/</loc>
 </url>
 </urlset>

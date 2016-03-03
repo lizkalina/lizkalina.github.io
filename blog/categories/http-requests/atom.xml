@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: flatiron&nbsp;school | Web Dev Blog]]></title>
-  <link href="http://lizkalina.github.io/blog/categories/flatiron-school/atom.xml" rel="self"/>
+  <title><![CDATA[Category: http&nbsp;requests | Web Dev Blog]]></title>
+  <link href="http://lizkalina.github.io/blog/categories/http-requests/atom.xml" rel="self"/>
   <link href="http://lizkalina.github.io/"/>
   <updated>2016-03-03T07:55:38-05:00</updated>
   <id>http://lizkalina.github.io/</id>
@@ -122,140 +122,6 @@ in the controller:</p>
 <li><a href="http://guides.rubyonrails.org/v3.2.9/action_controller_overview.html">Action Controller Overview</a>, RailsGuides</li>
 </ul>
 
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[TAP THAT...method]]></title>
-    <link href="http://lizkalina.github.io/blog/2016/02/16/tap-that-dot-dot-dot-method/"/>
-    <updated>2016-02-16T22:37:40-05:00</updated>
-    <id>http://lizkalina.github.io/blog/2016/02/16/tap-that-dot-dot-dot-method</id>
-    <content type="html"><![CDATA[<p>Why #tap you may ask? This method made me have a ‘Ruby, you rock' moment. I first stumbled upon it during the ‘Advanced Class Methods Lab,’ which had us write methods to create new instances of a Song class, modify that instance and return it. Although my code passed the tests, it had a bad code smell. I couldn’t say what exactly was wrong, but it just felt off. I brought this up with Ian who suggested I look into the tap method. I had no idea what that was so I did a little research, refactored my code with tap and celebrated with a ‘YASSSSS.’</p>
-
-<p><img class="center <a" src="href="https://media.giphy.com/media/kGZ4jJguXT5C0/giphy.gif">https://media.giphy.com/media/kGZ4jJguXT5C0/giphy.gif</a>" width="1928">
-<br></p>
-
-<h1>What can #tap do for you?</h1>
-
-<p>Let&rsquo;s take a quick look at a before and after of my &lsquo;Advacned Class Methods Lab.&rsquo; Both sets of code get the job done. In my earlier code, there was a line for instantiating the object, then a few lines of operations on that object and then a final lines returning that same object. Another blogger aptly called this &lsquo;sandwich code.&rsquo;&lsquo; After refactoring, I could do creation, operations and return all in one line!</p>
-
-<h3>BEFORE #tap</h3>
-
-<pre><code class="ruby">  def self.create
-    song = self.new
-    song.save
-    song
-  end
-
-  def self.new_by_name(song_name)
-    song = self.new
-    song.name = song_name
-    song
-  end
-</code></pre>
-
-<h3>AFTER #tap</h3>
-
-<pre><code class="ruby"> def self.create
-    self.new.tap{|song| song.save}
-  end
-
-  def self.new_by_name(song_name)
-    self.new.tap{|song| song.name = song_name}
-  end
-</code></pre>
-
-<h3>side by side from GitHub</h3>
-
-<p><img src="/images/tap-method/github-example.png" alt="github code" /></p>
-
-<p><br></p>
-
-<h1>How does #tap work though?</h1>
-
-<p>The <a href="http://ruby-doc.org/core-2.3.0/Object.html#method-i-tap">official Ruby documentation</a> says:</p>
-
-<blockquote><p>tap{|x|&hellip;} → obj
-Yields self to the block, and then returns self. The primary purpose of this method is to “tap into” a method chain, in order to perform operations on intermediate results within the chain.</p></blockquote>
-
-<h3>So essentially, the #tap method definition is:</h3>
-
-<pre><code class="ruby">def tap
-  yield(self)  
-  self  
-end  
-</code></pre>
-
-<h3>and when #tap is called:</h3>
-
-<pre><code class="ruby">an_object.tap do |object|
-  # do stuff with an_object
-end # ===&gt; return an_object
-</code></pre>
-
-<p>Self is the object tap is being called on (i.e. &lsquo;an_object&rsquo;). When tap runs, self first yields to the block (i.e. the code between do and end). And finally self (with block operations completed) will be returned.</p>
-
-<h3>Going back to my Song example this would mean:</h3>
-
-<ul>
-<li>self is Song.new</li>
-<li>yields to {|song| song.name = song_name} passing in Song.new</li>
-<li>returns Song.new with song.name set to song_name</li>
-</ul>
-
-
-<p><br></p>
-
-<h1>Using #tap to seed data</h1>
-
-<p>Let’s go through one more example from the seed.rb file during Jeff’s CLI lecture…</p>
-
-<pre><code class="ruby">courses = ['Math', 'Physics', 'English', 'History'].map do |course_name|
-  Course.new.tap do |course|
-    course.name = "#{course_name}"
-    teacher = Teacher.new("Mr. #{course_name}")
-    teacher.name = "Mr. #{course_name} teacher"
-    course.teacher = teacher
-  end
-end
-</code></pre>
-
-<p>This is more complex than the Song example, but really the purpose is the same. First, the map method goes through each item in the array with school subjects, creating a new instance of the Course object for each subject. #tap is called on each new Course object. Operations happen: A name is assigned to the Course, a new instance of the Teacher object is created and assigned as the teacher for the Course. After all that, the four new Course objects (with attributes assigned) is returned to tap, which is then returned to map. So the &lsquo;courses&rsquo; variable now equals:</p>
-
-<pre><code class="ruby">[&lt;Course:0x007f9e39047e80 @name="Math", @teacher=&lt;Teacher:0x007f9e39047db8 @name="Mr. Math teacher"&gt;&gt;, 
-&lt;Course:0x007f9e39047d68 @name="Physics", @teacher=&lt;Teacher:0x007f9e39047cc8 @name="Mr. Physics teacher"&gt;&gt;, 
-&lt;Course:0x007f9e39047c78 @name="English", @teacher=&lt;Teacher:0x007f9e39047bd8 @name="Mr. English teacher"&gt;&gt;, 
-&lt;Course:0x007f9e39047b88 @name="History", @teacher=&lt;Teacher:0x007f9e39047ae8 @name="Mr. History teacher"&gt;&gt;]
-</code></pre>
-
-<h3>This allowed us to quickly create a ton of sample data with minimal lines of code!</h3>
-
-<p>Takeaways: #tap is pretty awesome! It’s great for assigning properties to an object and overriding method returns. In simple cases like my Song example, it’s really just for convenience, but for more complex examples like the CLI seed file, it can actually lead to cleaner, clearer code. Watch out though, #tap should not be used to make your code look super fancy or obscure what the code is actually doing. Other interesting use cases still TBD.</p>
-
-<p><img class="center <a" src="href="https://media.giphy.com/media/3oEdv5S8Th6b9gsNqM/giphy.gif">https://media.giphy.com/media/3oEdv5S8Th6b9gsNqM/giphy.gif</a>"></p>
-
-<h1><center>damn, that sandwich can tap</center></h1>
-
-<!-- external-url: http://ruby-doc.org/core-2.3.0/Object.html#method-i-tap
-
-
-<script src="https://gist.github.com/lizkalina/7a037a413995deeb4144.js"></script> -->
-
-
-
-
-<!-- 
-!['yas, queen'](https://media.giphy.com/media/kGZ4jJguXT5C0/giphy.gif "yas, queen") -->
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[My First Post on Octopress]]></title>
-    <link href="http://lizkalina.github.io/blog/2016/02/16/my-first-post-on-octopress/"/>
-    <updated>2016-02-16T17:13:09-05:00</updated>
-    <id>http://lizkalina.github.io/blog/2016/02/16/my-first-post-on-octopress</id>
-    <content type="html"><![CDATA[<p>&ldquo;Hello, World!&rdquo;</p>
 ]]></content>
   </entry>
   
