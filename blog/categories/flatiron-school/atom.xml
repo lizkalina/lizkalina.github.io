@@ -4,7 +4,7 @@
   <title><![CDATA[Category: flatiron&nbsp;school | Web Dev Blog]]></title>
   <link href="http://lizkalina.github.io/blog/categories/flatiron-school/atom.xml" rel="self"/>
   <link href="http://lizkalina.github.io/"/>
-  <updated>2016-03-03T07:55:38-05:00</updated>
+  <updated>2016-03-16T08:10:33-04:00</updated>
   <id>http://lizkalina.github.io/</id>
   <author>
     <name><![CDATA[Liz]]></name>
@@ -12,6 +12,186 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Authentication with Devise]]></title>
+    <link href="http://lizkalina.github.io/blog/2016/03/15/authentication-with-devise/"/>
+    <updated>2016-03-15T21:36:08-04:00</updated>
+    <id>http://lizkalina.github.io/blog/2016/03/15/authentication-with-devise</id>
+    <content type="html"><![CDATA[<p>After building out basic authentication in class, I was curious about how to implement some of the widely used authentication plug-ins like <a href="https://github.com/plataformatec/devise">Devise</a> and <a href="https://github.com/binarylogic/authlogic">Authologic</a>, which the RailsGuides mentioned. A ton of developers are using these plug-ins. The Devise Github page has been starred ~15,000 and forked ~3,500 times! To get a better grasp of implementing one of these solutions, I decided to walk myself through the installation and configuration of Devise using the documentation and an example applications.</p>
+
+<h1>In a nutshell</h1>
+
+<p>According to the Devise documentation:</p>
+
+<blockquote><p>Devise is a flexible authentication solution for Rails based on Warden. It:</p>
+
+<ul>
+<li>Is Rack based;</li>
+<li>Is a complete MVC solution based on Rails engines;</li>
+<li>Allows you to have multiple models signed in at the same time;</li>
+<li>Is based on a modularity concept: use only what you really need.</li>
+</ul>
+</blockquote>
+
+<p>The Devise gem is built on top of <a href="https://github.com/hassox/warden">Warden</a>—a Rack application that runs as a separate and standalone module. Warden usually executes its role, including cookie handling and modified app behavior (hooks) for users who aren&rsquo;t logged in, before your Rails application is invoked. Once your application is running, Devise supplies helper methods, controller classes, views, models, routes, and configuration for authentication.</p>
+
+<h3>Models can inherit up to 10 Devise modules!</h3>
+
+<p>When you run the Devise generator, a model class and migration files are created. You can modify the configuration options (aka modules) on the model classes to determine what security features your application includes.</p>
+
+<ul>
+<li><em>Database Authenticatable:</em> checks that correct password entered, and encrypts before saving</li>
+<li><em>Confirmable:</em> sends confirmation emails to verify account</li>
+<li><em>Recoverable:</em> resets the user password and sends reset instructions</li>
+<li><em>Registerable:</em> handles registration process, also allows users to edit and destroy their account</li>
+<li><em>Rememberable:</em> remembers the user from a saved cookie, implemented with Remember Me?</li>
+<li><em>Trackable:</em> tracks sign in count, timestamps and IP addresses for users</li>
+<li><em>Validatable:</em> provides validations of email and password</li>
+<li><em>Lockable:</em> locks an account after a specified number of failed sign-in attempts</li>
+<li><em>Timeoutable:</em> expires sessions that have not been active in a specified period of time</li>
+<li><em>Omniauthable:</em> adds OmniAuth support</li>
+</ul>
+
+
+<h3>Example: User model</h3>
+
+<pre><code class="ruby">class User &lt; ActiveRecord::Base
+  devise :database_authenticatable, :registerable,
+         :recoverable, :rememberable, :trackable, :validatable
+
+  attr_accessible :email, :password, :password_confirmation, :remember_me, :username
+end
+</code></pre>
+
+<h3>Example: User migration</h3>
+
+<pre><code class="ruby">class DeviseCreateUsers &lt; ActiveRecord::Migration
+  def change
+    create_table(:users) do |t|
+      # Database authenticatable
+      t.string :email,              :null =&gt; false, :default =&gt; ""
+      t.string :encrypted_password, :null =&gt; false, :default =&gt; ""
+
+      # Recoverable
+      t.string   :reset_password_token
+      t.datetime :reset_password_sent_at
+
+      # Rememberable
+      t.datetime :remember_created_at
+
+      # Trackable
+      t.integer  :sign_in_count, :default =&gt; 0
+      t.datetime :current_sign_in_at
+      t.datetime :last_sign_in_at
+      t.string   :current_sign_in_ip
+      t.string   :last_sign_in_ip
+
+      t.timestamps
+    end
+
+    add_index :users, :email,                :unique =&gt; true
+    add_index :users, :reset_password_token, :unique =&gt; true
+end
+</code></pre>
+
+<hr />
+
+<p><br></p>
+
+<h1>Setting up Devise</h1>
+
+<h3>Step 1: Add Devise to your Gemfile</h3>
+
+<pre><code class="ruby">gem 'devise' # Use Devise for user authentication
+</code></pre>
+
+<h3>Step 2: Bundle &amp; run the setup generator</h3>
+
+<pre><code class="bash">bundle install # Fetch and install the gems
+rails generate devise:install #Creates config file, etc.
+</code></pre>
+
+<p>Devise has a well commented configuration file located at config/initializers/devise.rb. This is where site-wide settings are specified. It&rsquo;s important to look over this file before creating new models or adding Devise to your existing models.</p>
+
+<h3>Step 3: Create models (or add Devise to existing models)</h3>
+
+<pre><code class="bash">rails generate devise MODEL #Creates model class, routes, etc.
+</code></pre>
+
+<p>Replace MODEL (could be User, Admin or anything you would like) with the class name used for the application’s users. This will create a model (if one does not exist) and configure it with default Devise modules. The generator also configures your config/routes.rb file to point to the Devise controller.</p>
+
+<h3>Step 3: Migrate models</h3>
+
+<pre><code class="bash">rake db:migrate # Create model table(s)
+</code></pre>
+
+<h3>Optional: Quickly create default views</h3>
+
+<pre><code class="bash">rails generate devise:views users
+</code></pre>
+
+<p>This command creates the directory /app/views/users with all the devise views, including login form, registration form, etc. These views will help you get started, but after some time you&rsquo;ll probably want to change them.</p>
+
+<hr />
+
+<p><br></p>
+
+<h1>Devise helper methods</h1>
+
+<p>A few commonly used methods include:</p>
+
+<ul>
+<li>current_user</li>
+<li>user_signed_in?</li>
+<li>sign_in(@user)</li>
+<li>sign_out(@user)</li>
+<li>user_session</li>
+<li>authenticate_user!</li>
+</ul>
+
+
+<p>Possible use case: Let&rsquo;s call the authenticate_user! class method (via the controller) to ensure that a user can only access certain controller actions based on their whether or not they&rsquo;re logged in.</p>
+
+<h3>Ensure that every controller action requires a user to be logged in&hellip;</h3>
+
+<pre><code class="ruby">class ApplicationController &lt; ActionController::Base
+
+  before_filter :authenticate_user!
+
+end
+</code></pre>
+
+<h3>&hellip;except for the login and register controller actions.</h3>
+
+<pre><code class="ruby">class HomeController &lt; ApplicationController
+
+  skip_before_filter :authenticate_user!
+
+  def login
+  end
+
+  def register
+  end
+
+end
+</code></pre>
+
+<h2>Conclusion (kind of)</h2>
+
+<p>The RailsGuides mention that &ldquo;75% of attacks are at the web application layer, and that out of 300 audited sites, 97% are vulnerable to attack.&rdquo; That&rsquo;s huge! The attacks can come from a variety of routes including account hijacking, bypassing of access control, presenting fraudulent content or modifying sensitive data. There are a bunch of plug-ins available, but there is no one-size fits all approach to security and your protocol should be built around the needs of your application. Once you&rsquo;re up and running, it&rsquo;s important to keep up-to-date on new authentication developments and perform regular security checks to guarantee your site is still protected.</p>
+
+<h3>Helpful Resources</h3>
+
+<ul>
+<li><a href="http://guides.rubyonrails.org/security.html">RailsGuides: Security</a></li>
+<li><a href="http://www.rubydoc.info/github/plataformatec/devise/">Devise Documentation</a></li>
+</ul>
+
+
+<p><img class="center <a" src="href="https://media.giphy.com/media/Z34IiLkiwSbKw/giphy.gif">https://media.giphy.com/media/Z34IiLkiwSbKw/giphy.gif</a>" width="300"></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Param-arama: the Params Hash]]></title>

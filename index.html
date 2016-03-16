@@ -9,7 +9,7 @@
   <meta name="author" content="Liz">
 
   
-  <meta name="description" content="The params hash was first introduced to me with forms. When a user submitted a form in the view, a hash with that data was (magically?) passed to the &hellip;">
+  <meta name="description" content="After building out basic authentication in class, I was curious about how to implement some of the widely used authentication plug-ins like Devise &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -67,6 +67,279 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+  
+    
+      <h1 class="entry-title"><a href="/blog/2016/03/15/authentication-with-devise/">Authentication With Devise</a></h1>
+      
+      
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-03-15T21:36:08-04:00" pubdate data-updated="true"></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>After building out basic authentication in class, I was curious about how to implement some of the widely used authentication plug-ins like <a href="https://github.com/plataformatec/devise">Devise</a> and <a href="https://github.com/binarylogic/authlogic">Authologic</a>, which the RailsGuides mentioned. A ton of developers are using these plug-ins. The Devise Github page has been starred ~15,000 and forked ~3,500 times! To get a better grasp of implementing one of these solutions, I decided to walk myself through the installation and configuration of Devise using the documentation and an example applications.</p>
+
+<h1>In a nutshell</h1>
+
+<p>According to the Devise documentation:</p>
+
+<blockquote><p>Devise is a flexible authentication solution for Rails based on Warden. It:</p>
+
+<ul>
+<li>Is Rack based;</li>
+<li>Is a complete MVC solution based on Rails engines;</li>
+<li>Allows you to have multiple models signed in at the same time;</li>
+<li>Is based on a modularity concept: use only what you really need.</li>
+</ul>
+</blockquote>
+
+<p>The Devise gem is built on top of <a href="https://github.com/hassox/warden">Warden</a>—a Rack application that runs as a separate and standalone module. Warden usually executes its role, including cookie handling and modified app behavior (hooks) for users who aren&rsquo;t logged in, before your Rails application is invoked. Once your application is running, Devise supplies helper methods, controller classes, views, models, routes, and configuration for authentication.</p>
+
+<h3>Models can inherit up to 10 Devise modules!</h3>
+
+<p>When you run the Devise generator, a model class and migration files are created. You can modify the configuration options (aka modules) on the model classes to determine what security features your application includes.</p>
+
+<ul>
+<li><em>Database Authenticatable:</em> checks that correct password entered, and encrypts before saving</li>
+<li><em>Confirmable:</em> sends confirmation emails to verify account</li>
+<li><em>Recoverable:</em> resets the user password and sends reset instructions</li>
+<li><em>Registerable:</em> handles registration process, also allows users to edit and destroy their account</li>
+<li><em>Rememberable:</em> remembers the user from a saved cookie, implemented with Remember Me?</li>
+<li><em>Trackable:</em> tracks sign in count, timestamps and IP addresses for users</li>
+<li><em>Validatable:</em> provides validations of email and password</li>
+<li><em>Lockable:</em> locks an account after a specified number of failed sign-in attempts</li>
+<li><em>Timeoutable:</em> expires sessions that have not been active in a specified period of time</li>
+<li><em>Omniauthable:</em> adds OmniAuth support</li>
+</ul>
+
+
+<h3>Example: User model</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">User</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+</span><span class='line'>  <span class="n">devise</span> <span class="ss">:database_authenticatable</span><span class="p">,</span> <span class="ss">:registerable</span><span class="p">,</span>
+</span><span class='line'>         <span class="ss">:recoverable</span><span class="p">,</span> <span class="ss">:rememberable</span><span class="p">,</span> <span class="ss">:trackable</span><span class="p">,</span> <span class="ss">:validatable</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">attr_accessible</span> <span class="ss">:email</span><span class="p">,</span> <span class="ss">:password</span><span class="p">,</span> <span class="ss">:password_confirmation</span><span class="p">,</span> <span class="ss">:remember_me</span><span class="p">,</span> <span class="ss">:username</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Example: User migration</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">DeviseCreateUsers</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Migration</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">change</span>
+</span><span class='line'>    <span class="n">create_table</span><span class="p">(</span><span class="ss">:users</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">t</span><span class="o">|</span>
+</span><span class='line'>      <span class="c1"># Database authenticatable</span>
+</span><span class='line'>      <span class="n">t</span><span class="o">.</span><span class="n">string</span> <span class="ss">:email</span><span class="p">,</span>              <span class="ss">:null</span> <span class="o">=&gt;</span> <span class="kp">false</span><span class="p">,</span> <span class="ss">:default</span> <span class="o">=&gt;</span> <span class="s2">&quot;&quot;</span>
+</span><span class='line'>      <span class="n">t</span><span class="o">.</span><span class="n">string</span> <span class="ss">:encrypted_password</span><span class="p">,</span> <span class="ss">:null</span> <span class="o">=&gt;</span> <span class="kp">false</span><span class="p">,</span> <span class="ss">:default</span> <span class="o">=&gt;</span> <span class="s2">&quot;&quot;</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="c1"># Recoverable</span>
+</span><span class='line'>      <span class="n">t</span><span class="o">.</span><span class="n">string</span>   <span class="ss">:reset_password_token</span>
+</span><span class='line'>      <span class="n">t</span><span class="o">.</span><span class="n">datetime</span> <span class="ss">:reset_password_sent_at</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="c1"># Rememberable</span>
+</span><span class='line'>      <span class="n">t</span><span class="o">.</span><span class="n">datetime</span> <span class="ss">:remember_created_at</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="c1"># Trackable</span>
+</span><span class='line'>      <span class="n">t</span><span class="o">.</span><span class="n">integer</span>  <span class="ss">:sign_in_count</span><span class="p">,</span> <span class="ss">:default</span> <span class="o">=&gt;</span> <span class="mi">0</span>
+</span><span class='line'>      <span class="n">t</span><span class="o">.</span><span class="n">datetime</span> <span class="ss">:current_sign_in_at</span>
+</span><span class='line'>      <span class="n">t</span><span class="o">.</span><span class="n">datetime</span> <span class="ss">:last_sign_in_at</span>
+</span><span class='line'>      <span class="n">t</span><span class="o">.</span><span class="n">string</span>   <span class="ss">:current_sign_in_ip</span>
+</span><span class='line'>      <span class="n">t</span><span class="o">.</span><span class="n">string</span>   <span class="ss">:last_sign_in_ip</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">t</span><span class="o">.</span><span class="n">timestamps</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">add_index</span> <span class="ss">:users</span><span class="p">,</span> <span class="ss">:email</span><span class="p">,</span>                <span class="ss">:unique</span> <span class="o">=&gt;</span> <span class="kp">true</span>
+</span><span class='line'>    <span class="n">add_index</span> <span class="ss">:users</span><span class="p">,</span> <span class="ss">:reset_password_token</span><span class="p">,</span> <span class="ss">:unique</span> <span class="o">=&gt;</span> <span class="kp">true</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<hr />
+
+<p><br></p>
+
+<h1>Setting up Devise</h1>
+
+<h3>Step 1: Add Devise to your Gemfile</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">gem</span> <span class="s1">&#39;devise&#39;</span> <span class="c1"># Use Devise for user authentication</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Step 2: Bundle &amp; run the setup generator</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>bundle install <span class="c"># Fetch and install the gems</span>
+</span><span class='line'>rails generate devise:install <span class="c">#Creates config file, etc.</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Devise has a well commented configuration file located at config/initializers/devise.rb. This is where site-wide settings are specified. It&rsquo;s important to look over this file before creating new models or adding Devise to your existing models.</p>
+
+<h3>Step 3: Create models (or add Devise to existing models)</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>rails generate devise MODEL <span class="c">#Creates model class, routes, etc.</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Replace MODEL (could be User, Admin or anything you would like) with the class name used for the application’s users. This will create a model (if one does not exist) and configure it with default Devise modules. The generator also configures your config/routes.rb file to point to the Devise controller.</p>
+
+<h3>Step 3: Migrate models</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>rake db:migrate <span class="c"># Create model table(s)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Optional: Quickly create default views</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>rails generate devise:views users
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This command creates the directory /app/views/users with all the devise views, including login form, registration form, etc. These views will help you get started, but after some time you&rsquo;ll probably want to change them.</p>
+
+<hr />
+
+<p><br></p>
+
+<h1>Devise helper methods</h1>
+
+<p>A few commonly used methods include:</p>
+
+<ul>
+<li>current_user</li>
+<li>user_signed_in?</li>
+<li>sign_in(@user)</li>
+<li>sign_out(@user)</li>
+<li>user_session</li>
+<li>authenticate_user!</li>
+</ul>
+
+
+<p>Possible use case: Let&rsquo;s call the authenticate_user! class method (via the controller) to ensure that a user can only access certain controller actions based on their whether or not they&rsquo;re logged in.</p>
+
+<h3>Ensure that every controller action requires a user to be logged in&hellip;</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">ApplicationController</span> <span class="o">&lt;</span> <span class="no">ActionController</span><span class="o">::</span><span class="no">Base</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">before_filter</span> <span class="ss">:authenticate_user!</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>&hellip;except for the login and register controller actions.</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">HomeController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">skip_before_filter</span> <span class="ss">:authenticate_user!</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">login</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">register</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Conclusion (kind of)</h2>
+
+<p>The RailsGuides mention that &ldquo;75% of attacks are at the web application layer, and that out of 300 audited sites, 97% are vulnerable to attack.&rdquo; That&rsquo;s huge! The attacks can come from a variety of routes including account hijacking, bypassing of access control, presenting fraudulent content or modifying sensitive data. There are a bunch of plug-ins available, but there is no one-size fits all approach to security and your protocol should be built around the needs of your application. Once you&rsquo;re up and running, it&rsquo;s important to keep up-to-date on new authentication developments and perform regular security checks to guarantee your site is still protected.</p>
+
+<h3>Helpful Resources</h3>
+
+<ul>
+<li><a href="http://guides.rubyonrails.org/security.html">RailsGuides: Security</a></li>
+<li><a href="http://www.rubydoc.info/github/plataformatec/devise/">Devise Documentation</a></li>
+</ul>
+
+
+<p><img class="center" src="https://media.giphy.com/media/Z34IiLkiwSbKw/giphy.gif" width="300"></p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -486,6 +759,10 @@ Yields self to the block, and then returns self. The primary purpose of this met
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2016/03/15/authentication-with-devise/">Authentication with Devise</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2016/03/02/param-arama-sending-data-with-the-params-hash/">Param-arama: the Params Hash</a>
