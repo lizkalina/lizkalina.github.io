@@ -4,7 +4,7 @@
   <title><![CDATA[Web Dev Blog]]></title>
   <link href="http://lizkalina.github.io/atom.xml" rel="self"/>
   <link href="http://lizkalina.github.io/"/>
-  <updated>2016-03-16T08:10:33-04:00</updated>
+  <updated>2016-03-29T23:42:04-04:00</updated>
   <id>http://lizkalina.github.io/</id>
   <author>
     <name><![CDATA[Liz]]></name>
@@ -12,6 +12,120 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    
+    <title type="html"><![CDATA[A look inside of the jQuery library]]></title>
+    <link href="http://lizkalina.github.io/blog/2016/03/29/a-look-inside-of-the-jquery-library/"/>
+    
+    <updated>2016-03-29T21:44:45-04:00</updated>
+    <id>http://lizkalina.github.io/blog/2016/03/29/a-look-inside-of-the-jquery-library</id>
+    
+    <content type="html"><![CDATA[<p>After working with jQuery a bit, I appreciate how streamlined it makes traversing and manipulating the DOM. In this post, I want to understand some of the bigger picture domain components that make it possible. We will take a look at the DOM, NodeLists, and how to implement the jQuery library in your code.</p>
+
+<h1>A few basics</h1>
+
+<blockquote><p>jQuery is a fast, small, and feature-rich JavaScript library. It makes things like HTML document traversal and manipulation, event handling, animation, and Ajax much simpler with an easy-to-use API that works across a multitude of browsers.</p></blockquote>
+
+<ul>
+<li>$() is the equivalent of jQuery() - it&rsquo;s just a function</li>
+<li>jQuery functions usually take one argument - either a selector or something on the document</li>
+<li>jQuery is built on top of the DOM domain object model</li>
+<li>placing $() around an item turns it into a jQuery object</li>
+</ul>
+
+
+<h2>Overview of the DOM</h2>
+
+<p>The DOM (or Document Object Model) is a programming interface for HTML and XML documents. It provides a structured representation of the document and defines a way that the structure can be accessed so the document structure, style and content can be manipulated. The DOM provides a representation of the document as a structured group of nodes and objects that have properties and methods.</p>
+
+<p><img class="center" src="http://www.w3schools.com/js/pic_htmltree.gif" width="850"></p>
+
+<p>Essentially, it connects web pages to scripts or programming languages. When a webpage loads, the browser creates a Document Object Model of the page. The tree is composed of objects!</p>
+
+<p>Side note: The jQuery function $ and many of the jQuery methods like click and animate return a jQuery object or NodeList, which is part object and part array. A NodeList is a collection of DOM elements, which has array-like tendencies. It is missing a lot of JavaScript functionality though, such as true Array iteration and Prototypal methods.</p>
+
+<h2>Using jQuery selectors and functions</h2>
+
+<p>To add the jQuery library to your application, include a script tag in your HTML.</p>
+
+<p>Option 1: Download a jQuery file and store in your application.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='HTML'><span class='line'><span class="nt">&lt;head&gt;</span>
+</span><span class='line'><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;jquery-1.12.0.min.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+</span><span class='line'><span class="nt">&lt;/head&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Option 2: Link to a file listed on a Content Delivery Network.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='HTML'><span class='line'><span class="nt">&lt;head&gt;</span>
+</span><span class='line'><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+</span><span class='line'><span class="nt">&lt;/head&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The basic syntax is: <code>$(selector).action()</code></p>
+
+<ul>
+<li>A $ sign to define and access the jQuery functionality</li>
+<li>A (selector) to find HTML elements</li>
+<li>A jQuery action() function to be performed on selected element(s)</li>
+</ul>
+
+
+<p>The funtion below accepts a string containing a CSS selector, and will find DOM elements matching this selector. The second optional argument can be passed to set the context of what this should be within the inner function&rsquo;s scope.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='Javascript'><span class='line'><span class="nx">$</span><span class="p">(</span> <span class="nx">selector</span> <span class="p">[,</span> <span class="nx">context</span> <span class="p">]</span> <span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>There are a ton of jQuery function categories. We&rsquo;ve worked with the event functions like .on(), .toggle() and .change(). jQuery event functions trigger updates to the DOM based on user interaction.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='Javascript'><span class='line'><span class="p">.</span><span class="nx">hover</span><span class="p">(</span> <span class="nx">handlerIn</span><span class="p">,</span> <span class="nx">handlerOut</span> <span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The above funcion binds two handlers to the matched elements, to be executed when the mouse pointer enters and leaves the elements.</p>
+
+<p>Below is shorthand for the jQuery.ready function, which will run the inner function / callback after the page loads.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='Javascript'><span class='line'><span class="nx">$</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="c1">// Document is ready</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Since each jQuery function returns a modified jQuery object, you can execute a method chain. <code>$("div").animate(…).append(…);</code>, the animation happens on all of the <code>&lt;div&gt;</code> elements in the jQuery object, and they are all passed to the next function in the chain as part of the jQuery object. Although this is tempting, chaining many functions like can cause issues and be challenging to debug.</p>
+
+<p>Now that we&rsquo;ve talked a big picture, here&rsquo;s a shortlist of nifty selectors you can use:</p>
+
+<ul>
+<li>$(this) : Selects the current HTML element</li>
+<li>$(&ldquo;p.hello&rdquo;) : Selects all <code>&lt;p&gt;</code> elements with <code>class="hello"</code></li>
+<li>$(&ldquo;p:first&rdquo;) : Selects the first <code>&lt;p&gt;</code> element</li>
+<li>$(&ldquo;ul li:first&rdquo;) : Selects the first <code>&lt;li&gt;</code> element of the first <code>&lt;ul&gt;</code></li>
+<li>$(&ldquo;ul li:first-child&rdquo;) : Selects the first <code>&lt;li&gt;</code> element of every <code>&lt;ul&gt;</code></li>
+<li>$(&ldquo;[href]&rdquo;) : Selects all elements with an href attribute</li>
+<li>$(&ldquo;a[name=&lsquo;whatever&rsquo;]&rdquo;) : Selects all <code>&lt;a&gt;</code> elements with a name attribute equal to &ldquo;whatever&rdquo;</li>
+<li>$(&ldquo;a[name!=&lsquo;whatever&rsquo;]&rdquo;) : Selects all <code>&lt;a&gt;</code> elements with a name attribute NOT equal to &ldquo;whatever&rdquo;</li>
+<li>$(&ldquo;:button&rdquo;)  Selects all <code>&lt;button&gt;</code> elements and <code>&lt;input&gt;</code> elements of type=&ldquo;button&rdquo;</li>
+</ul>
+
+]]></content>
+    
+  </entry>
   
   <entry>
     
