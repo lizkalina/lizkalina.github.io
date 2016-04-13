@@ -4,7 +4,7 @@
   <title><![CDATA[Web Dev Blog]]></title>
   <link href="http://lizkalina.github.io/atom.xml" rel="self"/>
   <link href="http://lizkalina.github.io/"/>
-  <updated>2016-04-12T22:24:35-04:00</updated>
+  <updated>2016-04-12T22:28:35-04:00</updated>
   <id>http://lizkalina.github.io/</id>
   <author>
     <name><![CDATA[Liz]]></name>
@@ -74,7 +74,7 @@
 
 <p>Use CNAME for the file name and enter the domain you purchased in the first line of the document.</p>
 
-<p><img class="center" src="../images/gh-pages/CNAME.png" width="1200" height="1200"></p>
+<p><img src="http://lizkalina.github.io/images/gh-pages/CNAME.png" /></p>
 
 <h2>Step 3: Create the necessary records for your domain</h2>
 
@@ -89,7 +89,7 @@
 </ol>
 
 
-<p><img class="center" src="../images/gh-pages/DNS.png" width="1200" height="1200"></p>
+<p><img src="http://lizkalina.github.io/images/gh-pages/DNS.png" /></p>
 
 <p>That&rsquo;s it! My most recent project is now available at <a href="http://datahaiku.space/">www.datahaiku.space</a>. Don&rsquo;t fret if your site isn&rsquo;t live immediately. It can take a while for the DNS to update.</p>
 ]]></content>
