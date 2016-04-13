@@ -55,7 +55,7 @@ To host a recent project, I bought datahaiku.space for $0.88 on namecheap.com
 
 Use CNAME for the file name and enter the domain you purchased in the first line of the document.
 
-{% img center ../images/gh-pages/CNAME.png 1200 1200 %}
+<img src="{{ root_url }}/images/gh-pages/CNAME.png" />
 
 ## Step 3: Create the necessary records for your domain
 
@@ -67,6 +67,6 @@ For GitHub Pages, you will need to create three domain records:
 2. A record for @ pointing to 192.30.252.154
 3. CNAME record for www pointing to your username.github.io (username should be replaced with your actual GitHub account username)
 
-{% img center ../images/gh-pages/DNS.png 1200 1200 %}
+<img src="{{ root_url }}/images/gh-pages/DNS.png" />
 
 That's it! My most recent project is now available at [www.datahaiku.space](http://datahaiku.space/). Don't fret if your site isn't live immediately. It can take a while for the DNS to update.
