@@ -4,7 +4,7 @@
   <title><![CDATA[Category: flatiron&nbsp;school | Web Dev Blog]]></title>
   <link href="http://lizkalina.github.io/blog/categories/flatiron-school/atom.xml" rel="self"/>
   <link href="http://lizkalina.github.io/"/>
-  <updated>2016-03-29T23:42:04-04:00</updated>
+  <updated>2016-04-12T22:24:35-04:00</updated>
   <id>http://lizkalina.github.io/</id>
   <author>
     <name><![CDATA[Liz]]></name>
@@ -12,6 +12,80 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[How to: Deploy to GitHub Pages]]></title>
+    <link href="http://lizkalina.github.io/blog/2016/04/12/deploying-to-github-pages-with-a-custom-domain/"/>
+    <updated>2016-04-12T12:27:46-04:00</updated>
+    <id>http://lizkalina.github.io/blog/2016/04/12/deploying-to-github-pages-with-a-custom-domain</id>
+    <content type="html"><![CDATA[<p>On a recent project, my team had trouble getting a working version of our single page Javascript application live. We first deployed to Heroku with a workaround using a PHP file (since Herkou is built to handle larger applications and frameworks). Our site was live, but one of our APIs used an HTTP protocol and was therefore incompatible with Heroku&rsquo;s HTTPS. After some research, I stumbled upon GitHub Pages which allow you to host webpages for free and uses HTTP.</p>
+
+<h1>Create a gh-pages branch</h1>
+
+<p>Make sure the directory of the project you would like to deploy. Create a new branch called gh-pages and check it out. The branch name gh-pages is a special branch that GitHub uses to get files to build and publish from.</p>
+
+<pre><code>$ git checkout --orphan gh-pages
+$ git rm -rf .
+</code></pre>
+
+<p>Imporant: Make sure you&rsquo;re in the correct branch before running the second command! This will delete all files in that directory. After running these commands, you will be ready to prepare your new files, repopulating the working tree, by copying them from elsewhere.</p>
+
+<h3>Side note: What is an orphan branch?</h3>
+
+<blockquote><p>&ndash;orphan</p>
+
+<p>Create a new orphan branch, named <new_branch>, started from <start_point> and switch to it. The first commit made on this new branch will have no parents and it will be the root of a new history totally disconnected from all the other branches and commits.</p>
+
+<p>The index and the working tree are adjusted as if you had previously run &ldquo;git checkout <start_point>&rdquo;. This allows you to start a new history that records a set of paths similar to <start_point> by easily running &ldquo;git commit -a&rdquo; to make the root commit.</p>
+
+<p>This can be useful when you want to publish the tree from a commit without exposing its full history. You might want to do this to publish an open source branch of a project whose current tree is &ldquo;clean&rdquo;, but whose full history contains proprietary or otherwise encumbered bits of code.</p>
+
+<p>If you want to start a disconnected history that records a set of paths that is totally different from the one of <start_point>, then you should clear the index and the working tree right after creating the orphan branch by running &ldquo;git rm -rf .&rdquo; from the top level of the working tree. Afterwards you will be ready to prepare your new files, repopulating the working tree, by copying them from elsewhere, extracting a tarball, etc.</p>
+
+<p>Source: <a href="https://git-scm.com/docs/git-checkout/1.7.3.1">git-checkout(1) Manual Page</a></p></blockquote>
+
+<h1>Deploy to GitHub Pages</h1>
+
+<p>It&rsquo;s time to push your new branch to GitHub! Make sure your homepage is named index.html and located in the main directory of your repository. This is where GitHub will look for your homepage.</p>
+
+<pre><code>$ git add -A
+$ git commit -a -m "First GH Page commit"
+$ git push origin gh-pages
+</code></pre>
+
+<p>After you push to the gh-pages branch, your page will be available at: <code>http://&lt;username&gt;.github.io/&lt;projectname&gt;</code>.</p>
+
+<h1>Setting up a custom domain == &ldquo;FUN&rdquo;</h1>
+
+<h2>Step 1: Buy a domain</h2>
+
+<p>To host a recent project, I bought datahaiku.space for $0.88 on namecheap.com
+<img class="center <a" src="href="https://media.giphy.com/media/O8pa1CyYSp1yE/giphy.gif">https://media.giphy.com/media/O8pa1CyYSp1yE/giphy.gif</a>" width="1000" height="1000"></p>
+
+<h2>Step 2: Add a CNAME file to your GitHub repository.</h2>
+
+<p>Use CNAME for the file name and enter the domain you purchased in the first line of the document.</p>
+
+<p><img class="center" src="../images/gh-pages/CNAME.png" width="1200" height="1200"></p>
+
+<h2>Step 3: Create the necessary records for your domain</h2>
+
+<p>This means pointing the domain name at the IP address where your page is located. DNS is the “domain name system.” It translates human-friendly website addresses like www.learn.co into computer-friendly IP addresses like 157.166.224.25.</p>
+
+<p>For GitHub Pages, you will need to create three domain records:</p>
+
+<ol>
+<li>A record for @ pointing to 192.30.252.153</li>
+<li>A record for @ pointing to 192.30.252.154</li>
+<li>CNAME record for www pointing to your username.github.io (username should be replaced with your actual GitHub account username)</li>
+</ol>
+
+
+<p><img class="center" src="../images/gh-pages/DNS.png" width="1200" height="1200"></p>
+
+<p>That&rsquo;s it! My most recent project is now available at <a href="http://datahaiku.space/">www.datahaiku.space</a>. Don&rsquo;t fret if your site isn&rsquo;t live immediately. It can take a while for the DNS to update.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[A look inside of the jQuery library]]></title>
@@ -540,15 +614,6 @@ end
 <!-- 
 !['yas, queen'](https://media.giphy.com/media/kGZ4jJguXT5C0/giphy.gif "yas, queen") -->
 
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[My First Post on Octopress]]></title>
-    <link href="http://lizkalina.github.io/blog/2016/02/16/my-first-post-on-octopress/"/>
-    <updated>2016-02-16T17:13:09-05:00</updated>
-    <id>http://lizkalina.github.io/blog/2016/02/16/my-first-post-on-octopress</id>
-    <content type="html"><![CDATA[<p>&ldquo;Hello, World!&rdquo;</p>
 ]]></content>
   </entry>
   

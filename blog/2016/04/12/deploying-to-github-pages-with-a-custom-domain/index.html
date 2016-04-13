@@ -1,0 +1,293 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>How to: Deploy to GitHub Pages - Web Dev Blog</title>
+  <meta name="author" content="Liz">
+
+  
+  <meta name="description" content="On a recent project, my team had trouble getting a working version of our single page Javascript application live. We first deployed to Heroku with a &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://lizkalina.github.io/blog/2016/04/12/deploying-to-github-pages-with-a-custom-domain">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Web Dev Blog" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href='//fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+<link href='//fonts.googleapis.com/css?family=Fjalla+One' rel='stylesheet' type='text/css'>
+
+  
+
+</head>
+
+<body   class="collapse-sidebar sidebar-footer" >
+  <header role="banner">
+	<div class="header-title"><a href="/">Web Dev Blog</a></div>
+
+
+	<br><div class="header-subtitle">my Ruby thoughts</div>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:lizkalina.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+  
+    
+      <h1 class="entry-title">How to: Deploy to GitHub Pages</h1>
+    
+  
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-04-12T12:27:46-04:00" pubdate data-updated="true"></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>On a recent project, my team had trouble getting a working version of our single page Javascript application live. We first deployed to Heroku with a workaround using a PHP file (since Herkou is built to handle larger applications and frameworks). Our site was live, but one of our APIs used an HTTP protocol and was therefore incompatible with Heroku&rsquo;s HTTPS. After some research, I stumbled upon GitHub Pages which allow you to host webpages for free and uses HTTP.</p>
+
+<h1>Create a gh-pages branch</h1>
+
+<p>Make sure the directory of the project you would like to deploy. Create a new branch called gh-pages and check it out. The branch name gh-pages is a special branch that GitHub uses to get files to build and publish from.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ git checkout --orphan gh-pages
+</span><span class='line'>$ git rm -rf .</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Imporant: Make sure you&rsquo;re in the correct branch before running the second command! This will delete all files in that directory. After running these commands, you will be ready to prepare your new files, repopulating the working tree, by copying them from elsewhere.</p>
+
+<h3>Side note: What is an orphan branch?</h3>
+
+<blockquote><p>&ndash;orphan</p>
+
+<p>Create a new orphan branch, named <new_branch>, started from <start_point> and switch to it. The first commit made on this new branch will have no parents and it will be the root of a new history totally disconnected from all the other branches and commits.</p>
+
+<p>The index and the working tree are adjusted as if you had previously run &ldquo;git checkout <start_point>&rdquo;. This allows you to start a new history that records a set of paths similar to <start_point> by easily running &ldquo;git commit -a&rdquo; to make the root commit.</p>
+
+<p>This can be useful when you want to publish the tree from a commit without exposing its full history. You might want to do this to publish an open source branch of a project whose current tree is &ldquo;clean&rdquo;, but whose full history contains proprietary or otherwise encumbered bits of code.</p>
+
+<p>If you want to start a disconnected history that records a set of paths that is totally different from the one of <start_point>, then you should clear the index and the working tree right after creating the orphan branch by running &ldquo;git rm -rf .&rdquo; from the top level of the working tree. Afterwards you will be ready to prepare your new files, repopulating the working tree, by copying them from elsewhere, extracting a tarball, etc.</p>
+
+<p>Source: <a href="https://git-scm.com/docs/git-checkout/1.7.3.1">git-checkout(1) Manual Page</a></p></blockquote>
+
+<h1>Deploy to GitHub Pages</h1>
+
+<p>It&rsquo;s time to push your new branch to GitHub! Make sure your homepage is named index.html and located in the main directory of your repository. This is where GitHub will look for your homepage.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ git add -A
+</span><span class='line'>$ git commit -a -m "First GH Page commit"
+</span><span class='line'>$ git push origin gh-pages</span></code></pre></td></tr></table></div></figure>
+
+
+<p>After you push to the gh-pages branch, your page will be available at: <code>http://&lt;username&gt;.github.io/&lt;projectname&gt;</code>.</p>
+
+<h1>Setting up a custom domain == &ldquo;FUN&rdquo;</h1>
+
+<h2>Step 1: Buy a domain</h2>
+
+<p>To host a recent project, I bought datahaiku.space for $0.88 on namecheap.com
+<img class="center" src="https://media.giphy.com/media/O8pa1CyYSp1yE/giphy.gif" width="1000" height="1000"></p>
+
+<h2>Step 2: Add a CNAME file to your GitHub repository.</h2>
+
+<p>Use CNAME for the file name and enter the domain you purchased in the first line of the document.</p>
+
+<p><img class="center" src="../images/gh-pages/CNAME.png" width="1200" height="1200"></p>
+
+<h2>Step 3: Create the necessary records for your domain</h2>
+
+<p>This means pointing the domain name at the IP address where your page is located. DNS is the “domain name system.” It translates human-friendly website addresses like www.learn.co into computer-friendly IP addresses like 157.166.224.25.</p>
+
+<p>For GitHub Pages, you will need to create three domain records:</p>
+
+<ol>
+<li>A record for @ pointing to 192.30.252.153</li>
+<li>A record for @ pointing to 192.30.252.154</li>
+<li>CNAME record for www pointing to your username.github.io (username should be replaced with your actual GitHub account username)</li>
+</ol>
+
+
+<p><img class="center" src="../images/gh-pages/DNS.png" width="1200" height="1200"></p>
+
+<p>That&rsquo;s it! My most recent project is now available at <a href="http://datahaiku.space/">www.datahaiku.space</a>. Don&rsquo;t fret if your site isn&rsquo;t live immediately. It can take a while for the DNS to update.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Liz</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-04-12T12:27:46-04:00" pubdate data-updated="true"></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/flatiron-school/'>flatiron&nbsp;school</a>, <a class='category' href='/blog/categories/projects/'>projects</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://lizkalina.github.io/blog/2016/04/12/deploying-to-github-pages-with-a-custom-domain/" data-via="" data-counturl="http://lizkalina.github.io/blog/2016/04/12/deploying-to-github-pages-with-a-custom-domain/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2016/03/29/a-look-inside-of-the-jquery-library/" title="Previous Post: A look inside of the jQuery library">&laquo; A look inside of the jQuery library</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2016/04/12/deploying-to-github-pages-with-a-custom-domain/">How to: Deploy to GitHub Pages</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/03/29/a-look-inside-of-the-jquery-library/">A look inside of the jQuery library</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/03/15/authentication-with-devise/">Authentication with Devise</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/03/02/param-arama-sending-data-with-the-params-hash/">Param-arama: the Params Hash</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/02/16/tap-that-dot-dot-dot-method/">TAP THAT...method</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2016 -  Liz <br/>
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> + <a href="https://github.com/ioveracker/mnml">mnml</a>.
+	  
+  </span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
